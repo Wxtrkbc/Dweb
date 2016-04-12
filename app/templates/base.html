@@ -1,5 +1,15 @@
+<link href="{{ url_for('static',filename='index.css') }}" rel="stylesheet" type="text/css"/>
+
 {% extends "bootstrap/base.html" %}
-{% block title %}D.Web{% endblock %}
+{% block title %}D-Web{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename = 'D.ico') }}"
+type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename = 'D.ico') }}"
+type="image/x-icon">
+{% endblock %}
 
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
@@ -19,6 +29,15 @@
 <div class="container">
 	{% block page_content %}{% endblock %}
 </div>
+<div id=footer class="container" >
+	<p class="text-center text-info lead">
+		&copy; D.Wang 2016 
+		<br>
+		<a href="https://github.com/Wxtrkbc/Dweb">Github</a>
+	</p>
+</div>	
 {% endblock %}
+
+
 
 
