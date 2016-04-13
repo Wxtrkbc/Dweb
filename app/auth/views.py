@@ -1,9 +1,15 @@
 from flask import render_template, redirect, request, url_for, flash
-from flask.ext.login import login_user,login_required,logout_user
+from flask.ext.login import login_user,login_required,logout_user,current_user
 from . import auth
 from ..models import User
 from .forms import LoginForm,RegistrationForm
 from .. import db
+
+
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.ping()
 
 @auth.route('/login',methods=['GET','POST'])
 def login():
@@ -33,3 +39,4 @@ def register():
 		flash('You can now login.')
 		return redirect(url_for('auth.login'))
 	return render_template('auth/register.html', form=form)
+
