@@ -1,97 +1,24 @@
 
 {% extends "base.html" %}
 {% block page_content %}
-	<div id=header class="container">
+	<div id=body class="container">
 		<div class="row">
 			<div class="col-md-10" >
-				<div class="text-center lead" >
-					<p>One is all</p>
+				<div>
+					<h2 class="text-center">Python全栈工程师的成长之路</h2>
+					<br>
+					<p>
+						Python 是一门简明并强大的面向对象编程语言，由于简单易学且适合快速开发各种程序，Python已经在WEB开发、科学运算、大数据分析处理、自动化运维，网络爬虫，机器学习等方面得到广泛的使用,几乎可以胜任在任何领域和场合,根据权威编程语言排名网站TIOBE 统计，至2016年2月，Python为第5大编程语言，前一段时间发现引力波的科学家使用的就是pythno语言进行编程。
+					</p>
+					<p>
+						本网站文章主要讲如何从零到成长为一名Python全栈开发者，也许之前你可能并没有编程基础，但是这丝毫不影响你通过本网站学习Python，从而成为一名Python全栈工程师。在这里，我将通过最详细的讲解带你一步步成长。	
+					</p>
+					<br>
+					<p>
+						本网站会从Python语言基础，函数，面向对象，网络编程，算法，数据库，HTML/CSS/JS以及一些Web框架等各个方面进行讲解，其中会带有大量的实例给大家练习。
+					</p>
 				</div>	
 			</div>	
 		</div>
-	</div>
-	<div class="container">
-		<div class="row">
-			<div class="col-md-10">
-				<div id="Carousel" class="carousel slide" data-ride="carousel">
-					<div class="carousel-inner" role="listbox">			
-						<div class="item active">
-							<img src="{{ url_for('static', filename = '1.jpg') }}" alt="1">
-							<div class="cita">
-								<p>当你的笑容给我礼貌的招呼，当我想诉说这些年来的感触，你却点了满桌我最爱的食物，介绍我看一本天文学的书。若无其事，原来是最狠的报复。from 《想哭》</p>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-
-						<div class="item ">
-							<img src="{{ url_for('static', filename = '2.jpg') }}" alt="2">
-							<div class="cita">
-								<p>梦想不是挂在嘴边炫耀的空气，而是需要认真的实践，等到对的风，我们展翅翱翔。 by 九把刀</p>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-
-						<div class="item ">
-							<img src="{{ url_for('static', filename = '3.jpg') }}" alt="3">
-							<div class="cita">
-								<p>生活哪里是一层一层上台阶或下台阶，生活分明是踩着一块浮冰去另一块浮冰，却永不知岸在何处。 by 吕彦妮</p>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-
-						<div class="item ">
-							<img src="{{ url_for('static', filename = '4.jpg') }}" alt="4">
-							<div class="cita">
-								<p>生命中任何一天的结束，便永不重来。 from 《诱僧》</p>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-
-						<div class="item ">
-							<img src="{{ url_for('static', filename = '5.jpg') }}" alt="5">
-							<div class="cita">
-								<p>少女心是永远不会老的，等到了七十岁，八十岁，还可以为年轻的壮举发笑，还可以继续热爱世界，像十七八岁时热爱自己一样。by 陈大力</p>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-
-						<div class="item ">
-							<img src="{{ url_for('static', filename = '6.jpg') }}" alt="6">
-							<div class="cita">
-								<p>反正人生不是在此处失败，就是在彼处失败。失败者才不管别的有多重要。任性一回，不然一辈子都憋屈。 by 毛利</p>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-
-						<div class="item ">
-							<img src="{{ url_for('static', filename = '7.jpg') }}" alt="7">
-							<div class="cita">
-								<p>很多人觉得“爱”是比“喜欢”严重的事，不能轻易说出口。但我就是要说，我爱你。如果不能让你动心，起码吓吓你，让你无法忘记。 by 乌冬</p>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-					</div>
-
-					<ol class="carousel-indicators">
-					    <li data-target="#Carousel" data-slide-to="0" class="active"></li>
-					    <li data-target="#Carousel" data-slide-to="1"></li>
-					    <li data-target="#Carousel" data-slide-to="2"></li>
-					    <li data-target="#Carousel" data-slide-to="3"></li>
-					    <li data-target="#Carousel" data-slide-to="4"></li>
-					    <li data-target="#Carousel" data-slide-to="5"></li>
-					    <li data-target="#Carousel" data-slide-to="6"></li>
-				  	</ol>
-
-				  	<a class="left carousel-control" href="#Carousel" role="button" data-slide="prev">
-					    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-					    <span class="sr-only">Previous</span>
-					</a>
-					<a class="right carousel-control" href="#Carousel" role="button" data-slide="next">
-					    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-					    <span class="sr-only">Next</span>
-					</a>
-				</div>
-			</div>	
-		</div>		
-	</div>
+	</div>	
 {% endblock %}
