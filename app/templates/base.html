@@ -7,9 +7,11 @@
 {{ super() }}
 <link rel="shortcut icon" href="{{ url_for('static', filename = 'D.ico') }}"
 type="image/x-icon">
+
 <link rel="icon" href="{{ url_for('static', filename = 'D.ico') }}"
 type="image/x-icon">
 {% endblock %}
+
 
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
@@ -17,23 +19,25 @@ type="image/x-icon">
 		<div class="navbar-collapse collapse">
 			<ul class="nav nav-pills">
 				<li class="activate"><a href="/">Home</a></li>
-				<li ><a href="/">One</a></li>
-				
 				{% if current_user.is_authenticated %}
-				<li><a href="{{ url_for('main.user', username=current_user.username) }}">Profile</a></li>
+				<li class="nav nav-pills navbar-right"><a href="{{ url_for('auth.logout') }}">
+				<span class="glyphicon glyphicon-log-out"></span> SignOut</a></li>
+				{% else %}
+				<li class="nav nav-pills navbar-right"><a href="{{ url_for('auth.login') }}">
+				<span class="glyphicon glyphicon-log-in"></span> SignIn</a></li>
 				{% endif %}
 
 				{% if current_user.is_authenticated %}
-				<li class="nav nav-pills navbar-right"><a href="{{ url_for('auth.logout') }}">Sign Out</a></li>
-				{% else %}
-				<li class="nav nav-pills navbar-right"><a href="{{ url_for('auth.login') }}">Sign In</a></li>
+				<li class="nav  navbar-right">
+					<a href="{{ url_for('main.user', username=current_user.username) }}">
+					<span class="glyphicon glyphicon-user"></span> Profile</a></li>
 				{% endif %}
+				
 			</ul>
 		</div>
 	</div>
 </div>
 {% endblock %}
-
 
 {% block content %}
 <div class="container">
@@ -43,8 +47,29 @@ type="image/x-icon">
 		{{ message }}
 	</div>
 	{% endfor %}
+	<div>
+		<div class='col-md-2'>
+			<ul class="nav nav-sidebar">
+	            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
 
-	{% block page_content %}{% endblock %}
+	            <li class="dropdown">
+		            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+		               Python入门
+		            </a>
+		            <ul class="dropdown-menu">
+		               <li><a href="{{ url_for('python.py1') }}">Python简介</a></li>
+		               <li><a href="#">python基础知识</a></li>
+		            </ul>
+	         	</li>
+
+          	</ul>
+		</div>
+		<div class='col-md-10'>
+			
+			{% block page_content %}{% endblock %}
+		</div>
+	</div>
+	
 </div>
 
 <div id=footer class="container" >
@@ -56,6 +81,9 @@ type="image/x-icon">
 </div>	
 {% endblock %}
 
-
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
 
 
