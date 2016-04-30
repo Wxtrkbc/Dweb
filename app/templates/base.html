@@ -48,26 +48,37 @@ type="image/x-icon">
 	</div>
 	{% endfor %}
 	<div class="row" >
-		<div class='col-md-2'>
+		<div class='col-md-2 '>
 			<div class="block">
 				<h4>目录</h4>
 				<ul class="list-unstyled">
-					<li>
-						<a href="{{ url_for('python.py1') }}">Python简介</a>
-					</li>
+					<li style="margin-left: 1em">Python基础知识</li>
+					<ul class="list-unstyled">
+						<li style="margin-left: 2em">
+							<a href="{{ url_for('python.py1') }}">Python入门(一)</a>
+						</li>
+						<li style="margin-left: 2em">
+							<a href="{{ url_for('python.py2') }}">Python入门(二)</a>
+						</li>
+					</ul>					
 				</ul>
 			</div>
 		</div>
-		<div class='col-md-10'>
+
+
+
+		<div class='col-md-10 '>
 			{% block page_content %}{% endblock %}
 		</div>
+
 	</div>
 </div>
 <footer>
 	<div  class="container no-border" >
-	<p class="text-center text-info lead">
-		&copy; D.Wang 2016 
+	<p class="text-center text-info ">
+		Posted by:D.Wang in 2016 
 		<br>
+		Contact information:
 		<a href="https://github.com/Wxtrkbc/Dweb">Github</a>
 	</p>
 </div>	
