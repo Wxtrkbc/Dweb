@@ -4,7 +4,7 @@
 		<div class="row">
 			<div class="col-md-10 ">
 				<div>
-					<h1>Python入门(二)</h1>
+					<h1>Python基本数据类型</h1>
 					<hr>
 				</div>
 
@@ -14,7 +14,7 @@
 					<h3>一、算数元算</h3>
 					<img src="{{ url_for('static',filename="2-1.png") }}" alt="2-1" width="778px" height="300px">
 					<p>
-						读者可以跟着我按照下面的代码重新写一遍,其中需要注意的是，使用取整除的话，在python3中可以直接使用，结果是4没有任何问题，但是在python2中使用的话，则不行，比如 9//2 在pytnon2中 得出的结果则是4.5，如果要修正着一结果，读者需要在代码上加上一句 from __future__ import division 即可。
+						读者可以跟着我按照下面的代码重新写一遍,其中需要注意的是，使用除的话，在python3中可以直接使用，结果是4没有任何问题，但是在python2中使用的话，则不行，比如 9/2 在pytnon2中 得出的结果则是4，如果要修正着一结果，读者需要在代码上加上一句 from __future__ import division 即可。
 					</p>
 
 					<h3>二、比较运算</h3>
@@ -277,22 +277,22 @@ goods = [
 gouwuche={"电脑":0,"鼠标":0,"游艇":0,"美女":0} #购物车中商品数量
 jiage={"电脑":1999,"鼠标":10,"游艇":20,"美女":998} #商品价格表
 sum=0 #购物车中商品总价
+flag=True
 total=int(input("请输入您的资产: "))
 for k, i in enumerate(goods):
     print(k,i)
-
-while 1:
+while flag:
     n=input("购买商品请输入1，购买完成请输入2，离开请输入3: ")
     if 1==int(n):
         k=input("请输入你要购买的商品编号: ")
+        num = input('请输入你要购买商品的数量：')
         if int (k)>3:
             print("你输入的商品编号有误，请重新操作!")
             continue
         else:
             print("你选择的商品%s已添加到购物车" % goods[int(k)]['name'])
-            gouwuche[goods[int(k)]['name']]+=1
+            gouwuche[goods[int(k)]['name']]+=int(num)
             for k,v in gouwuche.items():
-                print(k,v)
                 sum+=jiage[k]*v
     elif 2==int(n):
         while 1:
@@ -315,6 +315,7 @@ while 1:
                     break
             else:
                 print("操作成功，你的余额还剩%s" % (total - sum))
+                flag=False
                 break
     elif 3==int(n):
         break
@@ -380,8 +381,8 @@ while flag:
 		<div class="row">
 			<div class="col-md-10">
 				<hr>
-				<a class="pull-left" href="{{ url_for('python.py1') }}"><span class="glyphicon glyphicon-arrow-left"></span> Python入门(一)</a>
-				<a class="pull-right" href="#">Python入门(三) <span class="glyphicon glyphicon-arrow-right"></span></a>
+				<a class="pull-left" href="{{ url_for('python.py1') }}"><span class="glyphicon glyphicon-arrow-left"></span> Python入门(</a>
+				<a class="pull-right" href="{{ url_for('python.py3') }}">Python函数 <span class="glyphicon glyphicon-arrow-right"></span></a>
 			</div>
 		</div>	
 	</div>
