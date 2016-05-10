@@ -1,14 +1,16 @@
+<link href="{{ url_for('static',filename='code.css') }}" rel="stylesheet" type="text/css"/>
+
 {% extends "base.html" %}
 {% block page_content %}
 	<div class="container">
 		<div class="row">
 			<div class="col-md-10 ">
-				<div>
-					<h1>Python基本数据类型</h1>
+				<div id="header">
+					<h1>基本数据类型</h1>
 					<hr>
 				</div>
 
-				<div>
+				<div id="body">
 					<h2>运算符</h2>
 
 					<h3>一、算数元算</h3>
@@ -34,7 +36,6 @@
 						成语运算主要用来判断某一元素是否在某种元素集合中，可以看下下面的例子加深体会
 					</p>
 					<pre>
-						<code>
 a="abcdefg"
 b="d"
 if b in a :
@@ -47,8 +48,7 @@ d=5
 if 5 in c :
     print("1在c列表")
 else:
-    print("1不在c列表")</code>
-					</pre>
+    print("1不在c列表")</pre>
 
 					<h2>数据类型</h2>
 					<h3>一、数字（int）</h3>
@@ -56,19 +56,16 @@ else:
 						Python可以处理任意大小的正负整数，但是实际中跟我们计算机的内存有关，在32位机器上，整数的位数为32位，取值范围为-2**31～2**31-1，在64位系统上，整数的位数为64位，取值范围为-2**63～2**63-1。对于int类型，需要掌握的方法不多，看下面的几个例子：
 					</p>
 					<pre>
-						<code>
 a=4
 print(a.bit_length()) # 4在二进制中可以用最少3位 001 来表示4，所以输出3
 print(int('4'))       #将字符串4转换成整数4
 
 # int还可下面的将二进制的字符串转换成整数， base=2 代表前面的字符串是二进制。
-print(int('1010',base=2)) # 输出10</code>
-					</pre>
+print(int('1010',base=2)) # 输出10</pre>
 
 					<h3>二、字符串（str）</h3>
 					<p>字符串的常用功能太多了，这里我例举几种常见的功能，具体请看下面的代码</p>
 					<pre>
-						<code>
 s="abcdef ghg k"
 print(s.title())              #将字符串转换成标题，输出 Abcdef Ghg K
 
@@ -92,13 +89,11 @@ print(s.split()) 　　　　　　 #分割字符串，返回一个列表 这里
 
 print(s.replace('g','G',1))   #替换，默认全部替换，可以设置为1，只替换一次，这里只替换一次输出abcdef Ghg k
 
-print(s[0:4])                 #切片，[0:4]代表将字符串s的前面4位取出来，这里输出 abcd</code>
-					</pre>
+print(s[0:4])                 #切片，[0:4]代表将字符串s的前面4位取出来，这里输出 abcd</pre>
 
 					<h3>三、列表（list</h3>
 					<p>列表是Python内置的一种数据类型是列表，是一种有序的集合，可以随时添加和删除其中的元素。</p>
 					<pre>
-						<code>
 l=['a','b','cc',4] 　　　　#定义一个列表
 
 l.append(5) 　　　　　　　 #添加一个元素,l=['a', 'b', 'cc', 4, 5]
@@ -118,15 +113,13 @@ print(l.index('gg'))  　　 #元素出现的位置，输出 1
 for i in l: 　　　　　　　 #循环输出列表元素
     print(i)
 
-print(l[0:4:2]) 　　　　　 #列表切片，以步长2递增，输出['kk', 4]</code>
-					</pre>
+print(l[0:4:2]) 　　　　　 #列表切片，以步长2递增，输出['kk', 4]</pre>
 
 					<h3>四、元组（tuple）</h3>
 					<p>
 						tuple和list非常类似，但是tuple一旦初始化就不能修改，tuple也是有序的，tuple使用的是小括号标识。
 					</p>
 					<pre>
-						<code>
 t=('a','b','b','c') 　　#定义一个元组
 
 print(t.index('b')) 　　#索引出元素第一次出现的位置，还可以指定在某一范围里查找，这里默认在整个元组里查找输出1
@@ -138,15 +131,13 @@ print(len(t))　　　　　 #输出远组的长度，这里输出4
 for i in t:
     print(i) 　　　　　 #循环打印出元组数据
 
-print(t[1:3]) 　　　　　#切片 输出('b','b')</code>
-					</pre>
+print(t[1:3]) 　　　　　#切片 输出('b','b')</pre>
 
 					<h3>五、字典（dict）</h3>
 					<p>
 						字典是无序的，使用键-值（key-value）存储，具有极快的查找速度。
 					</p>
 					<pre>
-						<code>
 d = {'Michael': 95, 'Bob': 75, 'Tracy': 85}
 
 d.get('Bob') 　　　　　　　　　　　　　　　　　　　 #根据key获取values，如果不存在返回None，这里输出75
@@ -166,8 +157,7 @@ for i in d.values():　　　　　　　　　　　　　　　　#循环按�
     print(i)
 
 for k,v in d.items():　　　　　　　　　　　　　　　 #循环按键值输出
-    print(k,v)</code>
-					</pre>
+    print(k,v)</pre>
 
 					<h2> 补充</h2>
 					<h3>一 enumrate</h3>
@@ -175,24 +165,20 @@ for k,v in d.items():　　　　　　　　　　　　　　　 #循环按键
 						为一个可迭代的对象添加序号，可迭代的对象你可以理解成能用for循环的就是可迭代的。默认是编号是从0开始，可以设置从1开始
 					</p>
 					<pre>
-						<code>
 li = ["手机", "电脑", '鼠标垫', '游艇']
 for k, i in enumerate(li，1):
-    print(k,i)</code>
-					</pre>
+    print(k,i)</pre>
 
 					<h3>二、range和xrange</h3>
 					<p>
 						在python2中有xrange和range，其中range会一次在内存中开辟出了所需的所有资源，而xrange则是在for循环中循环一次则开辟一次所需的内存，而在Python3中没有xrange，只有range ，但是python3的range代表的就是xrange。range用来指定范围，生成指定的数字。
 					</p>
 					<pre>
-						<code>
 for i in range(10):     #循环输出所生成的 0-9
     print(i) 
 
 for i in range(1,10,2): #输出所生成的 1 3 5 7 9
-    print(i)</code>
-					</pre>
+    print(i)</pre>
 
 					<h2>课后习题</h2>
 					<h3>一、元素分类</h3>
@@ -200,7 +186,6 @@ for i in range(1,10,2): #输出所生成的 1 3 5 7 9
 						有如下值集合 [11,22,33,44,55,66,77,88,99]，将所有大于 66 的值保存至字典的第一个key中，将小于 66 的值保存至第二个key的值中。即： {'k1': 大于66的所有值, 'k2': 小于66的所有值}
 					</p>
 					<pre>
-						<code>
 l= [11,22,33,44,55,66,77,88,99]
 bignum=[]
 smallnum=[]
@@ -214,15 +199,13 @@ for num in l:
         pass
 dir['k1']=bignum
 dir['k2']=smallnum
-print(dir)</code>
-					</pre>
+print(dir)</pre>
 
 					<h3>二、查找</h3>
 					<p>
 						查找元素，移动空格，并查找以 a或A开头 并且以 c 结尾的所有元素。
 					</p>
 					<pre>
-						<code>
 li = ["alec", " aric", "Alex", "Tony", "rain"]
 tu = ("alec", " aric", "Alex", "Tony", "rain")
 dic = {'k1': "alex", 'k2': ' aric',  "k3": "Alex", "k4": "Tony"}
@@ -235,13 +218,11 @@ for i in tu:
         print(i)
 for i in dic.values():
     if i.strip().capitalize().startswith('A') and i.strip().endswith('c'):
-        print (i)</code>
-					</pre>
+        print (i)</pre>
 
 					<h3>三、输出商品列表，用户输入序号，显示用户选中的商品</h3>
 					<p>商品 li = ["手机", "电脑", '鼠标垫', '游艇']</p>
 					<pre>
-						<code>
 #方法一
 l1=[1,2,3,4]
 l2=["手机", "电脑", '鼠标垫', '游艇']
@@ -255,8 +236,7 @@ li = ["手机", "电脑", '鼠标垫', '游艇']
 for k, i in enumerate(li):
     print(k,i)
 k=input("请输入商品编号：")
-print("你选择的商品为 %s" % li[int(k)])</code>
-					</pre>
+print("你选择的商品为 %s" % li[int(k)])</pre>
 
 					<h3>四、购物车</h3>
 					<p>功能要求：</p>
@@ -267,7 +247,6 @@ print("你选择的商品为 %s" % li[int(k)])</code>
 						<li>附加：可充值、某商品移除购物车</li>
 					</ul>
 					<pre>
-						<code>
 goods = [
     {"name": "电脑", "price": 1999},
     {"name": "鼠标", "price": 10},
@@ -321,12 +300,10 @@ while flag:
         break
     else:
         print("你输入的数字有误请重新操作!")
-        continue</code>
-					</pre>
+        continue</pre>
 
 					<h3>五、用户交互，显示省市县三级联动的选择</h3>
 					<pre>
-						<code>
 dic = {
     "河北": {
         "石家庄": ["鹿泉", "藁城", "元氏"],
@@ -372,8 +349,7 @@ while flag:
                         break
         else:
             print('不存在，请重新输入')
-            break</code>
-					</pre>
+            break</pre>
 				</div>
 			</div>
 		</div>

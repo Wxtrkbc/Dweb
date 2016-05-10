@@ -1,13 +1,16 @@
+<link href="{{ url_for('static',filename='code.css') }}" rel="stylesheet" type="text/css"/>
+
 {% extends "base.html" %}
 {% block page_content %}
 	<div class="container">
 		<div class="row">
 			<div class="col-md-10 ">
-				<div>
+				<div id="header">
 					<h1>Python入门</h1>
 					<hr>
 				</div>
-				<div>
+
+				<div id="body">
 					<h2>Python是什么</h2>
 					<p>
 						python是吉多·范罗苏姆发明的一种面向对象的脚本语言，可能有些人不知道面向对象和脚本具体是什么意思，但是对于一个初学者来说，现在并不需要明白。大家都知道，当下全栈工程师的概念很火，而Python是一种全栈的开发语言，所以你如果能学好Python，那么前端，后端，测试，大数据分析，爬虫等这些工作你都能胜任。
@@ -19,7 +22,6 @@
 						关于语言的选择，有各种各样的讨论，在这里我不多说，就引用Python里面的一个彩蛋来说明为什么要选择Python，在Python解释器里输入import this 就可以看到。
 					</p>
 					<pre>
-						<code>
 >>> import this
 
 The Zen of Python by Tim Peters
@@ -41,8 +43,7 @@ Now is better than never.
 Although never is often better than *right* now.
 If the implementation is hard to explain, it's a bad idea.
 If the implementation is easy to explain, it may be a good idea.
-Namespaces are one honking great idea -- let's do more of those!</code>
-					</pre>
+Namespaces are one honking great idea -- let's do more of those!</pre>
 
 					<p>
 						上面的话简单的总结来说就是“优雅”、“明确”、“简单”，或许你还是有些不明白，举个简单的例子，若果同样的功能你用C/C++写可能要写100行代码，而如果用Python写你可能只要20行代码就搞定，同样的如果一个问题有好几种解决方案，但是Python会用一种最简单的方法来实现。所以Python是用最简单最优雅最明确的方法来解决问题。
@@ -62,22 +63,18 @@ Namespaces are one honking great idea -- let's do more of those!</code>
 						安装好了环境之后，我们就可以编写代码了，这里我们以两种方式输出Hello，World，第一种我们用解释器来实现，打开cmd输入Python，如果没有出现下面的实例，检查下python环境变量是否配置好。
 					</p>
 					<pre>
-						<code>
 C:\Users\Tab>python
 Python 3.5.1 (v3.5.1:37a07cee5969, Dec  6 2015, 01:38:48) [MSC v.1900 32 bit (Intel)] on win32
 Type "help", "copyright", "credits" or "license" for more information.
 >>> print('Hello,World')
-Hello,World	</code>
-					</pre>
+Hello,World	</pre>
 					<p>
 						可以看出输出一句 hello，world 只需要一行代码即可，但是有一个缺点，那就是如果不小心把窗口关闭了，代码就没有了，所以在实际工作中这种方式并不常用。实际工作中，我们将代码保存在 .py文件中，保存为txt文件也行，但是就看不出来这是一个Python文件，所以不推荐这么做，然后在命令行下执行 python 1.py 就可以打印出来Hello,World。这里我使用的文本编辑器是Sublime Text。
 					</p>
 					<pre>
-						<code>
 #！/usr/bin/env python
 # coding=utf-8
-print("Hello,World")</code>
-					</pre>
+print("Hello,World")</pre>
 					<p>
 						第一行代码是在Linux下执行的时候，指出文件由python解释器来执行，第二行是告诉解释器在加载文件时，采用何种编码，不加上这句的话，在python2中显示中文会出现乱码，在python3中则不会，所以你如果用的是windows而且用的是python3，其实可以不用加这两句，不过实际中还是建议加上这两句。到这里我们就用了两种方式输Hello,World。
 					</p>
@@ -88,10 +85,8 @@ print("Hello,World")</code>
 						现在，你已经可以用print()输出你想要的结果了，但是，如果要让用户从电脑输入一些字符怎么办？Python提供了一个input()，可以让用户输入字符串，并存放到一个变量里。比如输入用户的名字：
 					</p>
 					<pre>
-						<code>
 name = input('username:')
-print('name')</code>
-					</pre>
+print('name')</pre>
 					<p>
 						假设将上面代码保存在文件1.py中，在命令行中执行python 1.py后，提示你输入一个用户名，输入完成后，打印出刚才输入的字符，上面声明了一个name变量，然后将输入的字符保存在name变量中，变量不仅可以是字符串，还可以是整数或浮点数，比如a=2将定义了一个整形变量a，值为2。此外变量定义的规则有以下几点：
 					</p>
@@ -104,7 +99,6 @@ print('name')</code>
 					<h3>四、流程控制和缩进</h3>
 					<p>Python的语法比较简单，采用缩进方式</p>
 					<pre>
-						<code>
 # xxxxx:
 '''
 a>0 则输出a 如果a<0,则输出-a
@@ -114,8 +108,7 @@ a = 1
 if a >= 0:
     print(a)
 else:
-    print(-a)</code>
-					</pre>
+    print(-a)</pre>
 					<p>
 						以#开头的语句是注释，还可以使用'''xxx'''来进行多行注释，注释是给人看的，解释器会忽略掉注释。注释是用来解释程序的作用和功能，以后再实际的工作中要养成写注释的良好习惯。当语句以冒号:结尾时，后面的语句要缩进。
 					</p>
@@ -124,37 +117,31 @@ else:
 					<H3>五、while循环</H3>
 					<H4>1.基本格式</H4>
 					<pre>
-					 	<code>
 # while 条件:   
    　　 # 循环体
   # 如果条件为真，那么循环体则执行
   # 如果条件为假，那么循环体不执行
    　　
 while True: 
-    print(1)</code>
-					</pre>
+    print(1)</pre>
 					<p>
 						上面的测试测序是一个死循环，条件一直为真，不停输出1。
 					</p>
 
 					<h4>2、break退出整个循环</h4>
 					<pre>
-						<code>
 while True:
-    print（1）
+    print(1)
     break
-    print（2</code>
-					</pre>
+    print(2)</pre>
 					<p>上面的代码会先输出1，然后遇到break，就退出当前循环，就不再打印出2了</p>
 
 					<h4>3、continue退出当前循环</h4>
 					<pre>
-						<code>
 while True:
     print（1）
     continue
-    print（2)</code>
-					</pre>
+    print（2)</pre>
 					<p>
 						大家可以思考下上面的程序输出什么，答案是会不停的输出1 1 1 1... ，为什么？因为循环条件一直为真，遇到continue语句的时候，程序跳出当前循环,而不执行 print（2）语句。
 					</p>
@@ -170,7 +157,6 @@ while True:
 						<li>用户登陆（三次机会重试）</li>
 					</ol>
 					<pre>
-						<code>
 #题1
 t=0
 while t<10:
@@ -218,8 +204,7 @@ while flag<3:
         break
     else:
         flag+=1
-        print ('error,input again')</code>
-					</pre>
+        print ('error,input again')</pre>
 				</div>
 			</div>	
 		</div>

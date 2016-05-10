@@ -14,29 +14,28 @@ type="image/x-icon">
 
 
 {% block navbar %}
-<div class="navbar navbar-inverse" role="navigation">
-	<div class="container">
-		<div class="navbar-collapse collapse">
-			<ul class="nav nav-pills">
-				<li class="activate"><a href="/">Home</a></li>
-				{% if current_user.is_authenticated %}
-				<li class="nav nav-pills navbar-right"><a href="{{ url_for('auth.logout') }}">
-				<span class="glyphicon glyphicon-log-out"></span> SignOut</a></li>
-				{% else %}
-				<li class="nav nav-pills navbar-right"><a href="{{ url_for('auth.login') }}">
-				<span class="glyphicon glyphicon-log-in"></span> SignIn</a></li>
-				{% endif %}
+	<div class="navbar navbar-inverse" role="navigation">
+		<div class="container">
+			<div class="navbar-collapse collapse">
+				<ul class="nav nav-pills">
+					<li class="activate"><a href="/">Home</a></li>
+					{% if current_user.is_authenticated %}
+					<li class="nav nav-pills navbar-right"><a href="{{ url_for('auth.logout') }}">
+					<span class="glyphicon glyphicon-log-out"></span> SignOut</a></li>
+					{% else %}
+					<li class="nav nav-pills navbar-right"><a href="{{ url_for('auth.login') }}">
+					<span class="glyphicon glyphicon-log-in"></span> SignIn</a></li>
+					{% endif %}
 
-				{% if current_user.is_authenticated %}
-				<li class="nav  navbar-right">
-					<a href="{{ url_for('main.user', username=current_user.username) }}">
-					<span class="glyphicon glyphicon-user"></span> Profile</a></li>
-				{% endif %}
-				
-			</ul>
+					{% if current_user.is_authenticated %}
+					<li class="nav  navbar-right">
+						<a href="{{ url_for('main.user', username=current_user.username) }}">
+						<span class="glyphicon glyphicon-user"></span> Profile</a></li>
+					{% endif %}				
+				</ul>
+			</div>
 		</div>
 	</div>
-</div>
 {% endblock %}
 
 {% block content %}
@@ -47,6 +46,7 @@ type="image/x-icon">
 		{{ message }}
 	</div>
 	{% endfor %}
+
 	<div class="row" >
 		<div class='col-md-2 '>
 			<div class="block">
@@ -55,13 +55,16 @@ type="image/x-icon">
 					<li style="margin-left: 1em">Python基础知识</li>
 					<ul class="list-unstyled">
 						<li style="margin-left: 2em">
-							<a href="{{ url_for('python.py1') }}">Python入门</a>
+							<a href="{{ url_for('python.py1') }}">1、Python入门</a>
 						</li>
 						<li style="margin-left: 2em">
-							<a href="{{ url_for('python.py2') }}">Python基本数据类型</a>
+							<a href="{{ url_for('python.py2') }}">2、基本数据类型</a>
 						</li>
 						<li style="margin-left: 2em">
-							<a href="{{ url_for('python.py3') }}">Python函数</a>
+							<a href="{{ url_for('python.py3') }}">3、Python函数</a>
+						</li>
+						<li style="margin-left: 2em">
+							<a href="{{ url_for('python.py4') }}">4、内置函数、文件操作和递归</a>
 						</li>
 					</ul>					
 				</ul>
@@ -70,7 +73,7 @@ type="image/x-icon">
 					<li style="margin-left: 1em">Python实战</li>
 					<ul class="list-unstyled">
 						<li style="margin-left: 2em">
-							<a href="{{ url_for('python.sz1') }}">自己动手写计算器</a>
+							<a href="{{ url_for('python.sz1') }}">1、自己动手写计算器</a>
 						</li>
 					</ul>					
 				</ul>
@@ -80,7 +83,7 @@ type="image/x-icon">
 					<li style="margin-left: 1em">Python源码解读</li>
 					<ul class="list-unstyled">
 						<li style="margin-left: 2em">
-							<a href="{{ url_for('python.ym1') }}">sockeserver源码分析</a>
+							<a href="{{ url_for('python.ym1') }}">1、socketserver源码分析</a>
 						</li>
 					</ul>					
 				</ul>

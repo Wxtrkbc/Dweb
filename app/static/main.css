@@ -1,5 +1,9 @@
 
 footer {
 	margin: 6em 0 2em 0;
+	/*background: rgb(0,163,280)*/
 }
 
+.row .col-md-2 .block {
+	/*background: rgb(210,216,222)*/
+}

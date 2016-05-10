@@ -14,10 +14,9 @@ def py2():
 def py3():
 	return render_template('python/1-3.html')
 
-
-
-
-
+@python.route('/1-4')
+def py4():
+	return render_template('python/1-4.html')
 
 
 

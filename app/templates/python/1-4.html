@@ -1,0 +1,269 @@
+<link href="{{ url_for('static',filename='code.css') }}" rel="stylesheet" type="text/css"/>
+
+{% extends "base.html" %}
+{% block page_content %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-10">
+				<div id="header">
+					<h1>内置函数、文件操作和递归</h1>
+					<hr>
+				</div>
+
+				<div id="body">
+					<h2>一、内置函数</h2>
+					<p>Python的内置函数有许多，下面的这张图全部列举出来了，然后我会把一些常用的拿出来讲解，可以跟着我敲一下代码加深理解。</p>
+					<img src="{{ url_for('static',filename='4-1.png') }}" alt="4-1" height="300px" width="800px">
+					<pre>
+# 匿名函数
+f=lambda a,b:a+b
+print(f(2,3))        　　　　　　　　　　　　　　　　　　　　　　　　　　　　# 5
+ 
+# abs() 取绝对值
+print(abs(-111))       　　　　　　　　　　　　　　　　　　　　　　　　　　　# 111
+ 
+# all() 循环可迭代对象的每个元素，都为真则返回True，否则返回假
+# 0，None ，"",[],(),{} 是假的
+print(all([11,22]))   　　　　　　　　　　　　　　　　　　　　　　　　　　　 #True
+ 
+# any 有一个为真，全部都为真
+print(any([0,0,None]))     　　　　　　　　　　　　　　　　　　　　　　　　　#False
+ 
+# ascii 在对象类中找 __repr__，获取返回值
+class D():
+    def __repr__(self):
+        return 'hello'
+d=D()
+print(ascii(d))       　　　　　　　　　　　　　　　　　　　　　　　　　　　 #hello
+ 
+# bin 将十进制转换成2进制
+# oct() hex()
+print(bin(11))           　　　　　　　　　　　　　　　　　　　　　　　　　　#0b1011
+ 
+#各种进制转换成十进制可以用int()
+print(int('11',base=2))         　　　　　　　　　　　　　　　　　　　　　　 #将二进制'11'转换成十进制数 3
+ 
+# bytearry   字节列表
+ 
+# chr() 找到数字对于的ascii码
+# ord() ascii码对应的数字
+# chr ord 只适用于ascii码
+print(chr(65))      　　　　　　　　　　　　　　　　　　　　　　　　　　　　 # A
+print(ord('A'))     　　　　　　　　　　　　　　　　　　　　　　　　　　　　 # 65
+ 
+# callable 后面加个括号是看否能执行
+#complie() 接受一个字符串，将其转换成函数代码
+ 
+# divmod 返回除法的（值，余数）
+print(divmod(10,3))    　　　　　　　　　　　　　　　　　　　　　　　　　　  #(3,1)
+ 
+# eval 计算器的功能 返回结果
+print(eval('a+60',{'a':90}))        　　　　　　　　　　　　　　　　　　　　 # 150
+print(eval('3+4*6/7+((1+2)-5)'))    　　　　　　　　　　　　　　　　　　　　 # 4.428571428571429
+ 
+#exec,执行python代码,没有返回值
+exec("for i in range(5):print(i)")  　　　　　　　　　　　　　　　　　　　   # 直接循环输出0，1，2，3，4
+ 
+# filter(函数，可迭代的对象）
+# 循环可以迭代的对象，传入函数中执行，如果不符合就过滤
+def fun(s):                 　　　　　　　　　　　　　　　　　　　　　　　　 #定义判断一个数是否是偶数的函数
+    if s%2==0:
+        return True
+    else:
+        return False
+ret=filter(fun,[1,2,3,4,5,6,7,8])
+for i in ret:
+    print(i)               　　　　　　　　　　　　　　　　　　　　　　　　　# 打印出2，4，6，8
+ 
+#用匿名函数改写一下
+ret1=filter(lambda x:x%2==0,[1,2,3,4,5,6,7,8])
+for i in ret1:
+    print(i)                                      　　　　　　　　　　　　　 # 2,4,6,8
+ 
+#map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回
+ret=map(lambda x:x+100,[1,2,3])
+for i in ret:
+    print(i)                                  　　　　　　　　　　　　　　　 # 101,102,103
+ 
+# globals() 获取当前文件的所有全局变量
+# locals()  获取当前文件的所有局部变量
+# hash()    获取哈希值
+# isinstance 看某个对象是不是某个类创建的
+ 
+#iter() 创建一个可以被迭代的对象 next()取下一个值
+k=iter([1,2,3,4])
+print(next(k))                  　　　　　　　　　　　　　　　　　　　　　　 # 1
+ 
+# pow() 求指数
+print(pow(2,10))        　　　　　　　　　　　　　　　　　　　　　　　　　　 #1024
+ 
+# round() 四舍五入
+# #zip
+l1=[1,2,3,4]
+l2=['a','b','c','d']
+k=zip(l1,l2)
+for i in k: 
+    print(i)                     　　　　　　　　　　　　　　　　　　　　　　#打印出(1,a),(2,b)....	</pre>
+
+					<h2>二、文件操作</h2>
+					<p>
+						文件操作分为3个过程，文件打开，操作文件，关闭文件，但是每次都要关闭文件很麻烦，而且有可能在实际工作操作的时候忘了关闭文件，所以我们用另一种操作，用with语句来操作，这样就不需要手动来关闭文件。在后面的操作中，我都会以with方式来打开文件。
+					</p>
+					<pre>
+#windows下默认为gbk，要指定编码为'utf-8'
+#'r'为只读，'1.txt'为文件路径
+f=open('1.txt','r',encoding='utf-8')  			#打开文件
+data=f.read()　　　　　　　　　　　　　　 		#操作文件
+f.close()　　　　　　　　　　　　　　　　　　　 #关闭文件
+print(data)
+ 
+# 用with语句打开，不需要自动关闭
+with open('1.txt','r',encoding='utf-8') as f:
+    print(f.read())	</pre>
+					<p>文件打开方式有下面这些：</p>
+					<ul>
+						<li>r ，只读模式【默认】</li>
+						<li>w，只写模式【不可读：不存在则创建；存在则清空内容；】</li>
+						<li>x， 只写模式【不可读：不存在则创建，存在则报错】</li>
+						<li>a， 追加模式【不可读；不存在则创建；存在则只追加内容；】</li>
+					</ul>
+					<p>
+						"+" 表示可以同时读写某个文件，比如r+，w+，x+ 和 a+ 。"b"表示以字节的方式操作rb或r+b，wb 或 w+b，xb 或 x+b、ab 或 a+b，以b方式打开时，读取到的内容是字节类型，写入时也需要提供字节类型，这些都需要程序员自己来做转换，下面从代码来操作一遍。
+					</p>
+					<pre>
+with open('1.txt','r',encoding='utf-8') as f:
+    print(f.read())               　　　　　　　　        # 1.txt，不存在，报错
+ 
+# # w只写（不可读，不存在创建，存在则清空）
+with open('1.txt','w') as f:
+    f.write('888')               　　　　　　　　         #创建1.txt 写入新内容888
+ 
+ 
+#x 只写(不可读，不存在创建，存在报错)
+with open('1.txt','x') as f:
+    f.write('666')                 　　　　　　           #这里存在，报错
+ 
+# a 追加模式（不可读，不存在创建，存在往末尾追加）
+with open('1.txt','a') as f:
+    f.write('777')                 　　　　　　           #往1.txt里面追加 777
+ 
+#以字节方式打开
+#将1.txt里面的文件内容清空，往里面写入‘字符串’
+#需要自己手动转换
+with open('1.txt','wb') as f:
+    str_data='字符串'
+    byte_data=bytes(str_data,encoding='utf-8')
+    f.write(byte_data)
+#以rb读
+with open('1.txt','rb') as f:
+    data=f.read()
+    print(type(data))　　　　　　　　　　　　  　　　　　 #打印出读取的类型 字节
+    str_data=str(data,encoding='utf-8')　　 　　　　　　　#字节转换成字符串
+    print(str_data)                        　　 	      #打印出'字符串'</pre>
+					<p>下面着重讲解下用"+" 同时读写某个文件的操作</p>
+					<pre>
+# r+形式 写的时候在末尾追加，指针移到到最后
+# 大家一定要清楚的明白读写的时候指针指向的位置，下面的这个例子一定要懂
+# f.tell()   读取指针的位置
+# f.seek(0)  设置指针的位置
+with open('1.txt','r+',encoding='utf-8') as f:
+    print(f.tell())            #打印下 文件开始时候指针指向哪里 这里指向 0
+    print(f.read())            #读出文件内容'字符串'，
+    print(f.tell())            #文件指针指到 9，一个汉子三个字符串，指针是以字符为单位
+    f.write('科比')            #写入内容'科比',需要特别注意此时文件指到文件末尾去了
+    print(f.read())            #指针到末尾去了，所以读取的内容为空
+    print(f.tell())            #指针指到15
+    f.seek(0)                  #将指针内容指到 0 位置
+    print(f.read())            #因为文件指针指到开头去了，所以可以读到内容 字符串科比
+ 
+# w+形式 存在的话先清空 一写的时候指针到最后
+with open('1.txt','w+') as f:
+    f.write('Kg')               #1.txt存在，所以将内面的内容清空，然后再写入 'kg'
+    print(f.tell())             #此时指针指向2
+    print(f.read())             #读不到内容，因为指针指向末尾了
+    f.seek(0)
+    print(f.read())             #读到内容，因为指针上一步已经恢复到起始位置
+     
+# a+打开的时候指针已经移到最后，这里就不再演示了，读者可以自己试一下
+# x+文件存在的话则报错，也不演示了</pre>
+					<p>
+						假设现在有这样一个需求，有一个10G大的文件，如何拷贝到另一个文件中去？下面将讲一下如何同时打开两个文件进行处理，以及文件太大的时候如何读取用with语句就可以同时打开两个文件，一个读，一个写。假设1.txt文件有10G大，如果用read则一次性就将内容读到内存中去了，这显然不合适，如果用readline()的话虽然也可以读一行，但是并不知道何时结束，但是可以用for循环读取文件这个可迭代的对象，一行行的读取。下面三行代码就可以实现了
+					</p>
+					<pre>
+with open('1.txt','r',encoding='utf-8') as fread,open('2.txt','w') as fwrite:
+    for line in fread:　　　　　　　　　　　　　　　　　　　　　　#一行行的读
+        fwrite.write(line)</pre>
+					<h2>三、递归</h2>
+					<p>
+						如果一个函数在其内部调用它自己，就叫做递归，但是递归的时候要设置一个退出递归的条件，不然会一直递归下去，变成一个死循环。从另一个方面来说，递归其实和循环其实是等价的。想要明白递归的话，我们先从实际的例子上来说明这一点，比如说我们要写一个阶乘函数 f(n)算出n的阶乘，阶乘函数实现的方法很多，下面讲如何用递归实现
+					</p>
+					<pre>
+def f(n):
+    if 0==n:                　　# n=0 的话直接返回空，对用户输入的零进行判断
+        return None
+    elif 1==n:              　　# n=1 的话直接就不再递归
+        return n
+    else:
+        return n*f(n-1)    　　 # 递归在执行f(n-1) 直道f（1）
+print(f(5))                　　 # 120
+'''
+    f(5)的执行过程如下
+        ===> f(5)
+        ===> 5 * f(4)
+        ===> 5 * (4 * f(3))
+        ===> 5 * (4 * (3 * f(2)))
+        ===> 5 * (4 * (3 * (2 * f(1))))
+        ===> 5 * (4 * (3 * (2 * 1)))
+        ===> 5 * (4 * (3 * 2))
+        ===> 5 * (4 * 6)
+        ===> 5 * 24
+        ===> 120
+'''	</pre>
+
+					<p>
+						上一篇随笔的最后一个作业，就是用递归获取斐波那契数列中的第10个数，这里我们来说说是怎么实现的，费波那契数列由0，1开始，费波那契系数就由之前的两数相加，先看代码
+					</p>
+					<pre>
+def fun(n):　　　　　　　　　　　　　　　# fun(10)即可计算第十个斐波拉数
+    if 1==n :　　　　　　　　　　　　　　#直接定义前面两个数为 0 ，1，如果输入的n为1，2的话直接就返回了
+        return 0
+    elif 2==n:
+        return 1
+    else:
+        return fun(n-1)+fun(n-2)　　 	 #如果输入的不是1，2则进行递归出来计算他前面两个说的和
+ 
+'''
+    fun(5)的执行过程如下
+        ===> fun(5)
+        ===> fun(4)+fun(3)
+        ===> fun(3)+fun(2) + fun(2)+fun(1)
+        ===> fun(2)+fun(1)+fun(2)+fun(2)+fun(1)
+        ===> 1+0+1+1+1+0
+        ===> 3
+'''	</pre>
+					<h2>四、练习</h2>
+					<p>利用内置函数chr(),ord()以及random模块写一个简单随机4位验证码</p>
+					<pre>
+import random
+tmp=''　　　　　　　　　　　　　　　　　　　　　　　　　#最后生成的随机码
+for i in range(4):
+    n=random.randrange(0,2)　　　　　　　　　　　　　　 #生成随机数1或0，用来判断下面，是生成随机数字，还是字母
+    if n==0:
+        num = random.randrange(65, 91)　　　　　　　　　#为0时候，生成大写字母
+        tmp+=chr(num)
+    else:
+        k=random.randrange(0,10)　　　　　　　　　　　　#为1时候，生成数字
+        tmp+=str(k)
+print(tmp)　　　　　　　　　　　　　　　　　　　　　　　#这里运行的时候每次生成的4为随机码都不同</pre>
+
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-10">
+				<hr>
+				<a class="pull-left" href="{{ url_for('python.py3') }}"><span class="glyphicon glyphicon-arrow-left"></span> Python函数</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
