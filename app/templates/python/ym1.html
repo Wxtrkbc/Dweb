@@ -2,181 +2,180 @@
 
 {% extends "base.html" %}
 {% block page_content %}
-	<div class="contain">
-		<div class="row">
-			<div class="col-ma-10">
-                <div id="header">
-                    <h1>socketserver源码分析</h1>
-                    <hr>
-                </div>
-				
+	<div class="row">
+        <div class="col-ma-12">
+            <div id="header">
+                <h1>socketserver源码分析</h1>
+                <hr>
+            </div>
+            
 
-    			<div id="body">
-    				<h2>一、socketserver简介</h2>
-    				<p>
-    					socketserver是一个创建服务器的框架，封装了许多功能用来处理来自客户端的请求，简化了自己写服务端代码。比如说对于基本的套接字服务器(socket-based servers),里面就定义了地址族(AF_INET,AF_UNIX等)、套接字类型(SOCK_STREAM,SOCK_DGRAM)等，此外对于基于请求的服务器(request-based servers)，里面就详细叙述了如何处理客户端认证，多重请求等。
-    				</p>
+            <div id="body">
+                <h2>一、socketserver简介</h2>
+                <p>
+                    socketserver是一个创建服务器的框架，封装了许多功能用来处理来自客户端的请求，简化了自己写服务端代码。比如说对于基本的套接字服务器(socket-based servers),里面就定义了地址族(AF_INET,AF_UNIX等)、套接字类型(SOCK_STREAM,SOCK_DGRAM)等，此外对于基于请求的服务器(request-based servers)，里面就详细叙述了如何处理客户端认证，多重请求等。
+                </p>
 
-    				<h2>二、server种类</h2>
-    				<p>
-    					在serketserver里有5种类型的server，他们的继承关系如下图，下面的4个类都是同步处理请求的，不支持异步处理，同步处理意思是下一个请求必须等待上一个请求被处理完才能开始。如果要让他们支持异步处理，需要继承ForkingMixIn or ThreadingMixIn，使他们支持继承多进程和多线程。比如说定义一个多线程UDPserver需要这样写 class ThreadingUDPServer(ThreadingMixIn, UDPServer): pass
-    				</p>
-    				<img src="{{ url_for('static',filename="ym1.jpg") }}" alt="ym1">
-    				<p>
-    					如果要自己写一个server类，首先要继承基本请求处理类baseRequestHandler，然后重写他的 handle()方法来实现你自己的请求处理，需要注意的是要区分开StreamRequestHandler or DatagramRequestHandler(TCp or UDP)
-    				</p>
-    				<h3>1.BaseServer</h3>
-    				<p>BaseServer是其他几种server类的基类，类中定义的方法有下面这些：</p>
-    				<pre>
+                <h2>二、server种类</h2>
+                <p>
+                    在serketserver里有5种类型的server，他们的继承关系如下图，下面的4个类都是同步处理请求的，不支持异步处理，同步处理意思是下一个请求必须等待上一个请求被处理完才能开始。如果要让他们支持异步处理，需要继承ForkingMixIn or ThreadingMixIn，使他们支持继承多进程和多线程。比如说定义一个多线程UDPserver需要这样写 class ThreadingUDPServer(ThreadingMixIn, UDPServer): pass
+                </p>
+                <img src="{{ url_for('static',filename="ym1.jpg") }}" alt="ym1">
+                <p>
+                    如果要自己写一个server类，首先要继承基本请求处理类baseRequestHandler，然后重写他的 handle()方法来实现你自己的请求处理，需要注意的是要区分开StreamRequestHandler or DatagramRequestHandler(TCp or UDP)
+                </p>
+                <h3>1.BaseServer</h3>
+                <p>BaseServer是其他几种server类的基类，类中定义的方法有下面这些：</p>
+                <pre>
 Methods for the caller:
- 
-    - __init__(server_address, RequestHandlerClass) 　　　　　　　　#初始化 可扩长
-    - serve_forever(poll_interval=0.5)　　　　　　　　　　　　　　　#被构造函数调用激活服务器
-    - shutdown()　　　　　　　　　　　　　　　　　　　　　　　　　　#关闭server_forever循环
-    - handle_request()  # if you do not use serve_forever()   　　  #请求处理函数，可能会被阻塞
-　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　	#get_request->verify_request->process_request
-    - fileno() -> int   # for selector                        　　  #返回一个整型文件操作符供服务器监听，
- 
+
+- __init__(server_address, RequestHandlerClass) 　　　　　　　　#初始化 可扩长
+- serve_forever(poll_interval=0.5)　　　　　　　　　　　　　　　#被构造函数调用激活服务器
+- shutdown()　　　　　　　　　　　　　　　　　　　　　　　　　　#关闭server_forever循环
+- handle_request()  # if you do not use serve_forever()   　　  #请求处理函数，可能会被阻塞
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　   #get_request->verify_request->process_request
+- fileno() -> int   # for selector                        　　  #返回一个整型文件操作符供服务器监听，
+
 Methods that may be overridden:
- 
-    - server_bind()　　　　　　　　　　　　　　　　　　　　　　　　 #绑定到要监听的地址上
-    - server_activate()　　　　　　　　　　　　　　　　　　　　　　 #被构造函数调用激活服务器，
-    - get_request() -> request, client_address　　　　　　　　　　　#获取请求
-    - handle_timeout()　　　　　　　　　　　　　　　　　　　　　　　#处理超时
-    - verify_request(request, client_address)　　　　　　　　　 　　#验证请求
-    - server_close()　　　　　　　　　　　　　　　　　　　　　　　　#关闭服务器
-    - process_request(request, client_address)　　　　　　　　　　　#进程处理，调用finish_request 完成请求
-    - shutdown_request(request)　　　　　　　　　　　　　　　　　　 #被shutdown调用，关闭一个单独的请求
-    - close_request(request)　　　　　　　　　　　　　　　　　　　  #关闭请求
-    - service_actions()　　　　　　　　　　　　　　　　　　　　　　 #被serve_forever 调用
-    - handle_error()　　　　　　　　　　　　　　　　　　　　　　　　#处理错误</pre>
 
-    				<h3>2、TCPServer</h3>
-    				<p>
-    					TCPServer是一种基本的套接字服务器类，采用TCP协议，继承自BaseServer，这里我会着重讲下TCPServer，然后自己写一个TCPserver，首先我们来看下在Socketserver源码中看下代码实现
-    				</p>
-    				<pre>
+- server_bind()　　　　　　　　　　　　　　　　　　　　　　　　 #绑定到要监听的地址上
+- server_activate()　　　　　　　　　　　　　　　　　　　　　　 #被构造函数调用激活服务器，
+- get_request() -> request, client_address　　　　　　　　　　　#获取请求
+- handle_timeout()　　　　　　　　　　　　　　　　　　　　　　　#处理超时
+- verify_request(request, client_address)　　　　　　　　　 　　#验证请求
+- server_close()　　　　　　　　　　　　　　　　　　　　　　　　#关闭服务器
+- process_request(request, client_address)　　　　　　　　　　　#进程处理，调用finish_request 完成请求
+- shutdown_request(request)　　　　　　　　　　　　　　　　　　 #被shutdown调用，关闭一个单独的请求
+- close_request(request)　　　　　　　　　　　　　　　　　　　  #关闭请求
+- service_actions()　　　　　　　　　　　　　　　　　　　　　　 #被serve_forever 调用
+- handle_error()　　　　　　　　　　　　　　　　　　　　　　　　#处理错误</pre>
+
+                <h3>2、TCPServer</h3>
+                <p>
+                    TCPServer是一种基本的套接字服务器类，采用TCP协议，继承自BaseServer，这里我会着重讲下TCPServer，然后自己写一个TCPserver，首先我们来看下在Socketserver源码中看下代码实现
+                </p>
+                <pre>
 class TCPServer(BaseServer):
- 
-    address_family = socket.AF_INET             　　　　　　# 定义地址族，ipv4
-    socket_type = socket.SOCK_STREAM　　　　　　　　　　　　# 定义套接字类型，流式套接字（TCP)<br>　　request_queue_size = 5　　　　　　　　　　　　　　  # 定义监听的数量
-    allow_reuse_address = False　　　　　　　　　　　　　　 # 定义是否要设置套接口的选项
- 
-    def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True):<br>
-        BaseServer.__init__(self, server_address, RequestHandlerClass) 　　　  　　#调用BaseServer的初始化
-        self.socket = socket.socket(self.address_family,self.socket_type)  　 　　 #创建一个套接字
-        if bind_and_activate:
-            try:
-                self.server_bind()
-                self.server_activate()            　　 　　　　　　　　　　　　　　#调用bind（）和activate（）
-            except:　　
-                self.server_close()　　　　　　　　　　　　　　　　　　　　　　　　#关闭server
-                raise
- 
-    def server_bind(self):　　　　　　　　　　　　　　　　　　　　　　　　　　　　 #绑定监听地址
- 
-        if self.allow_reuse_address:
-            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)   　 #设定socket
-        self.socket.bind(self.server_address)　　　　　　　　　　　　　　　　　　　#绑定地址
-        self.server_address = self.socket.getsockname()        　　　　　　　　　　#获取待连接客户端的地址
- 
-    def server_activate(self):　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
-        self.socket.listen(self.request_queue_size)　　　　　　　　　　　　　　　　#监听　
- 
-    def server_close(self):
-        self.socket.close()　　　　　　　　　　　　　　　　　　　　　　　　　　　　#关闭
- 
-    def fileno(self):
-        return self.socket.fileno()　　　　　　　　　　　　　　　　　　　　　　　　#文件描述符
- 
-    def get_request(self):
-        return self.socket.accept()　　　　　　　　　　　　　　　　　　　　　　　 #接受客户端的连接
- 
-    def shutdown_request(self, request):
-        try:
-            request.shutdown(socket.SHUT_WR)　　　　　　　　　 #关闭之前先调用shutdown保证通信双方数据不丢失
-        except OSError:
-            pass 　　　　　　　　　　　　　　　　　　　　　　　#之后再调用close
-        self.close_request(request)
- 
-    def close_request(self, request):　　　　　　　　　　　　　#释放套接字的描述符，直接调用可能丢弃传输队列中的数据
-        request.close()<</pre>
 
-    				<h3>3、BaseRequestHandler和StreamRequestHandler</h3>
-    				<p>
-    					如果自己要实现TCPServer,我们还要自己定义一个请求处理类，而且要继承BaseRequestHandler或者StreamRequestHandler，并且覆盖他的handle()处理函数，用来处理请求。下面看一下他们的定义：
-    				</p>
-    				<pre>
-class BaseRequestHandler
-    def __init__(self, request, client_address, server):   　　　　　　#初始化request,client_addres server
-        self.request = request
-        self.client_address = client_address
-        self.server = server
-        self.setup()　　　　　　　　　　　　　　　　　　　　　　　　　 #在handle()方法前调用，初始化所有需要的
+address_family = socket.AF_INET             　　　　　　# 定义地址族，ipv4
+socket_type = socket.SOCK_STREAM　　　　　　　　　　　　# 定义套接字类型，流式套接字（TCP)<br>　　request_queue_size = 5　　　　　　　　　　　　　　  # 定义监听的数量
+allow_reuse_address = False　　　　　　　　　　　　　　 # 定义是否要设置套接口的选项
+
+def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True):<br>
+    BaseServer.__init__(self, server_address, RequestHandlerClass) 　　　  　　#调用BaseServer的初始化
+    self.socket = socket.socket(self.address_family,self.socket_type)  　 　　 #创建一个套接字
+    if bind_and_activate:
         try:
-            self.handle()
-        finally:
-            self.finish()
- 
-    def setup(self):
-        pass
- 
-    def handle(self):　　　　　　　　　　　　　　　　　　　　　　　　　#具体的处理请求函数，需要被覆盖
-        pass
- 
-    def finish(self):　　　　　　　　　　　　　　　　　　　　　　　　　#在handle()方法好后调用，清理工作
-        pass
- 
- 
+            self.server_bind()
+            self.server_activate()            　　 　　　　　　　　　　　　　　#调用bind（）和activate（）
+        except:　　
+            self.server_close()　　　　　　　　　　　　　　　　　　　　　　　　#关闭server
+            raise
+
+def server_bind(self):　　　　　　　　　　　　　　　　　　　　　　　　　　　　 #绑定监听地址
+
+    if self.allow_reuse_address:
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)   　 #设定socket
+    self.socket.bind(self.server_address)　　　　　　　　　　　　　　　　　　　#绑定地址
+    self.server_address = self.socket.getsockname()        　　　　　　　　　　#获取待连接客户端的地址
+
+def server_activate(self):　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    self.socket.listen(self.request_queue_size)　　　　　　　　　　　　　　　　#监听　
+
+def server_close(self):
+    self.socket.close()　　　　　　　　　　　　　　　　　　　　　　　　　　　　#关闭
+
+def fileno(self):
+    return self.socket.fileno()　　　　　　　　　　　　　　　　　　　　　　　　#文件描述符
+
+def get_request(self):
+    return self.socket.accept()　　　　　　　　　　　　　　　　　　　　　　　 #接受客户端的连接
+
+def shutdown_request(self, request):
+    try:
+        request.shutdown(socket.SHUT_WR)　　　　　　　　　 #关闭之前先调用shutdown保证通信双方数据不丢失
+    except OSError:
+        pass 　　　　　　　　　　　　　　　　　　　　　　　#之后再调用close
+    self.close_request(request)
+
+def close_request(self, request):　　　　　　　　　　　　　#释放套接字的描述符，直接调用可能丢弃传输队列中的数据
+    request.close()<</pre>
+
+                <h3>3、BaseRequestHandler和StreamRequestHandler</h3>
+                <p>
+                    如果自己要实现TCPServer,我们还要自己定义一个请求处理类，而且要继承BaseRequestHandler或者StreamRequestHandler，并且覆盖他的handle()处理函数，用来处理请求。下面看一下他们的定义：
+                </p>
+                <pre>
+class BaseRequestHandler
+def __init__(self, request, client_address, server):   　　　　　　#初始化request,client_addres server
+    self.request = request
+    self.client_address = client_address
+    self.server = server
+    self.setup()　　　　　　　　　　　　　　　　　　　　　　　　　 #在handle()方法前调用，初始化所有需要的
+    try:
+        self.handle()
+    finally:
+        self.finish()
+
+def setup(self):
+    pass
+
+def handle(self):　　　　　　　　　　　　　　　　　　　　　　　　　#具体的处理请求函数，需要被覆盖
+    pass
+
+def finish(self):　　　　　　　　　　　　　　　　　　　　　　　　　#在handle()方法好后调用，清理工作
+    pass
+
+
 class StreamRequestHandler(BaseRequestHandler):
- 
-    rbufsize = -1                                          　　　　　　#为流式套接字定义rfile和wfile
-    wbufsize = 0
- 
-    timeout = None
- 
-    disable_nagle_algorithm = False                　　　　　　　　　　#当wbufsize !=0才会用到，避免太小的包
- 
-    def setup(self):
-        self.connection = self.request
-        if self.timeout is not None:
-            self.connection.settimeout(self.timeout)
-        if self.disable_nagle_algorithm:
-            self.connection.setsockopt(socket.IPPROTO_TCP,
-                                       socket.TCP_NODELAY, True)
-        self.rfile = self.connection.makefile('rb', self.rbufsize)    #一个类似文件的对象，可以用来接收客户端的数据
-        self.wfile = self.connection.makefile('wb', self.wbufsize)　　#一个类似文件的对象，可以向客户端返回数据
- 
-    def finish(self):
-        if not self.wfile.closed:　　　　　　　　　　　　　　　　　　 #wfile关闭之前需要刷新
-            try:
-                self.wfile.flush()
-            except socket.error:
-                pass
-        self.wfile.close()
-        self.rfile.close()</pre>
-    				<p>
-    					到这里我们就可以自己编写一个单线程server类来，按照自己的要求来处理请求了，下面写了一个最简单的客户端与服务端通信的例子，主要是为了方便大家好理解。代码实例如下，打开两个命令行工具，首先运行server.py，在另外一个命令行运行client.py，会看到服务端收到的数据为'hello,server'，客户端收到的数据为'你好'。
-    				</p>
-    				<pre>
+
+rbufsize = -1                                          　　　　　　#为流式套接字定义rfile和wfile
+wbufsize = 0
+
+timeout = None
+
+disable_nagle_algorithm = False                　　　　　　　　　　#当wbufsize !=0才会用到，避免太小的包
+
+def setup(self):
+    self.connection = self.request
+    if self.timeout is not None:
+        self.connection.settimeout(self.timeout)
+    if self.disable_nagle_algorithm:
+        self.connection.setsockopt(socket.IPPROTO_TCP,
+                                   socket.TCP_NODELAY, True)
+    self.rfile = self.connection.makefile('rb', self.rbufsize)    #一个类似文件的对象，可以用来接收客户端的数据
+    self.wfile = self.connection.makefile('wb', self.wbufsize)　　#一个类似文件的对象，可以向客户端返回数据
+
+def finish(self):
+    if not self.wfile.closed:　　　　　　　　　　　　　　　　　　 #wfile关闭之前需要刷新
+        try:
+            self.wfile.flush()
+        except socket.error:
+            pass
+    self.wfile.close()
+    self.rfile.close()</pre>
+                <p>
+                    到这里我们就可以自己编写一个单线程server类来，按照自己的要求来处理请求了，下面写了一个最简单的客户端与服务端通信的例子，主要是为了方便大家好理解。代码实例如下，打开两个命令行工具，首先运行server.py，在另外一个命令行运行client.py，会看到服务端收到的数据为'hello,server'，客户端收到的数据为'你好'。
+                </p>
+                <pre>
 #server.py
 import socketserver
 class myTCPHandle(socketserver.StreamRequestHandler):　　　　　　　　　
-    def handle(self):　　　　　　　　　　　　　　　　　　　 #定义自己的请求处理函数　
-        print("connet from %s:%s" % self.client_address)　　#打印客户端的地址
-        self.data=self.rfile.readline()　　　　　　　　　　 #读取客户端的传过来的一行数据
-        print(str(self.data,encoding="utf-8"))
-        self.wfile.write(bytes('你好',encoding='utf-8'))　  #发送数据‘你好’给客户端
+def handle(self):　　　　　　　　　　　　　　　　　　　 #定义自己的请求处理函数　
+    print("connet from %s:%s" % self.client_address)　　#打印客户端的地址
+    self.data=self.rfile.readline()　　　　　　　　　　 #读取客户端的传过来的一行数据
+    print(str(self.data,encoding="utf-8"))
+    self.wfile.write(bytes('你好',encoding='utf-8'))　  #发送数据‘你好’给客户端
 if __name__=='__main__':
-    address=('127.0.0.1',9999)
-    server=socketserver.TCPServer(address,myTCPHandle)　　  #创建一个基于TCPServer的套接字
-    server.serve_forever()　　　　　　　　　　　　　　　　　#调用它的server_forever()函数处理一个请求直到它被shutdown
- 
+address=('127.0.0.1',9999)
+server=socketserver.TCPServer(address,myTCPHandle)　　  #创建一个基于TCPServer的套接字
+server.serve_forever()　　　　　　　　　　　　　　　　　#调用它的server_forever()函数处理一个请求直到它被shutdown
+
 #client.py
 import socket
 client=socket.socket(socket.AF_INET,socket.SOCK_STREAM)　　 #创建套接字
 client.connect(('127.0.0.1',9999)) 　　　　　　　　　　　　 #要连接的地址和端口
- 
+
 data='hello,server\n'　　　　　　　　　　　　　　　　　　　 #发送的数据 \n作为行结束
 data_bytes=bytes(data,encoding="utf-8")　　　　　　　　　   #转换成字节发送
 client.send(data_bytes)　　　　　　　　　　　　　　　　　　 #发送数据
@@ -184,51 +183,51 @@ data_recive=client.recv(1024)　　　　　　　　　　　　　　　 #接�
 print(str(data_recive,encoding='utf-8'))　　　　　　　　　　#将接受的数据转换成字符串
 client.close()　　　　　　　　　　　　　　　　　　　　　　　#关闭套接字</pre>
 
-    				<h3>4、ThreadingMixIn</h3>
-    				<p>如果要实现以支持多线程的server，就需要继承ThreadingMixIn类，下面是源码</p>
-    				<pre>
+                <h3>4、ThreadingMixIn</h3>
+                <p>如果要实现以支持多线程的server，就需要继承ThreadingMixIn类，下面是源码</p>
+                <pre>
 class ThreadingMixIn:
- 
-    daemon_threads = False
- 
-    def process_request_thread(self, request, client_address):  　　　　　　 #处理请求的线程函数
- 
-        try:
-            self.finish_request(request, client_address)
-            self.shutdown_request(request)
-        except:
-            self.handle_error(request, client_address)
-            self.shutdown_request(request)
- 
-    def process_request(self, request, client_address):
-　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　  #生成一个线程
-        t = threading.Thread(target = self.process_request_thread,args = (request, client_address))
-        t.daemon = self.daemon_threads
-        t.start()　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 #启动线程</pre>
 
-    				<h2>三、实现一个ThreadingTCPServer</h2>	
-    				<pre>
+daemon_threads = False
+
+def process_request_thread(self, request, client_address):  　　　　　　 #处理请求的线程函数
+
+    try:
+        self.finish_request(request, client_address)
+        self.shutdown_request(request)
+    except:
+        self.handle_error(request, client_address)
+        self.shutdown_request(request)
+
+def process_request(self, request, client_address):
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　  #生成一个线程
+    t = threading.Thread(target = self.process_request_thread,args = (request, client_address))
+    t.daemon = self.daemon_threads
+    t.start()　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 #启动线程</pre>
+
+                <h2>三、实现一个ThreadingTCPServer</h2>   
+                <pre>
 # server.py
 import socketserver
 import threading
- 
+
 class ThreadingTCPServer(socketserver.ThreadingMixIn,socketserver.TCPServer):  #继承ThreadingMixIn，使其支持多线程
-    pass
- 
+pass
+
 class myTCPHandle(socketserver.StreamRequestHandler):
-    def handle(self):
-        print("connet from %s:%s" % self.client_address)
-        cur_thread=threading.current_thread()                           #打印当前处理请求线程的名字
-        self.data=self.rfile.readline()　　　　　　　　　　　　　　　　 #读取客户端的数据
-        print(cur_thread.name)
-        print(str(self.data,encoding="utf-8"))
-        self.wfile.write(bytes('你好',encoding='utf-8'))    　　　　　　#向客户端发送数据
- 
+def handle(self):
+    print("connet from %s:%s" % self.client_address)
+    cur_thread=threading.current_thread()                           #打印当前处理请求线程的名字
+    self.data=self.rfile.readline()　　　　　　　　　　　　　　　　 #读取客户端的数据
+    print(cur_thread.name)
+    print(str(self.data,encoding="utf-8"))
+    self.wfile.write(bytes('你好',encoding='utf-8'))    　　　　　　#向客户端发送数据
+
 if __name__=='__main__':
-    address=('127.0.0.1',9999)
-    server=socketserver.ThreadingTCPServer(address,myTCPHandle)　　　　 #创建一个支持多线程的socket
-    #server=socketserver.TCPServer(address,myTCPHandle)
-    server.serve_forever()　　　　　　　　　　　　　　　　　　　　　　　#调用server_forever（）处理请求直到被shutdown
+address=('127.0.0.1',9999)
+server=socketserver.ThreadingTCPServer(address,myTCPHandle)　　　　 #创建一个支持多线程的socket
+#server=socketserver.TCPServer(address,myTCPHandle)
+server.serve_forever()　　　　　　　　　　　　　　　　　　　　　　　#调用server_forever（）处理请求直到被shutdown
 '''
 服务端打印的数据如下：
 　　connect from 127.0.0.1：xxx
@@ -236,22 +235,21 @@ if __name__=='__main__':
 　　from client：x
 　　...
 '''
- 
+
 #client.py
 import socket
 for i in range(5):
-    k=socket.socket(socket.AF_INET,socket.SOCK_STREAM)                   #定义了5个套接字，连接服务端，并向他发送数据
-    k.connect(('127.0.0.1',9999))
-    senddata='from client:{}\n'.format(i+1)　　　　　　　　　　　　　　　#向服务端发送数据
-    k.send(bytes(senddata,encoding='utf-8'))
-    data_recive=k.recv(1024)
-    print(str(data_recive,encoding='utf-8'))　　　　　　　　　　　　　　 #打印从服务端收到的数据 你好
-    k.close()</pre>
-    				<p>
-    					到这里我就实现了一个如何处理多线程的TCPServer,程序虽然简单，但是有助于大家理解socketserver，至于多进程的实现也类似，这里就不多叙述了，大家有兴趣的可以去实现以下。
-    				</p>
-			    </div>
-		    </div>
+k=socket.socket(socket.AF_INET,socket.SOCK_STREAM)                   #定义了5个套接字，连接服务端，并向他发送数据
+k.connect(('127.0.0.1',9999))
+senddata='from client:{}\n'.format(i+1)　　　　　　　　　　　　　　　#向服务端发送数据
+k.send(bytes(senddata,encoding='utf-8'))
+data_recive=k.recv(1024)
+print(str(data_recive,encoding='utf-8'))　　　　　　　　　　　　　　 #打印从服务端收到的数据 你好
+k.close()</pre>
+                <p>
+                    到这里我就实现了一个如何处理多线程的TCPServer,程序虽然简单，但是有助于大家理解socketserver，至于多进程的实现也类似，这里就不多叙述了，大家有兴趣的可以去实现以下。
+                </p>
+            </div>
         </div>
-	</div>
+    </div>
 {% endblock %}

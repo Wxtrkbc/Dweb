@@ -2,240 +2,239 @@
 
 {% extends "base.html" %}
 {% block page_content %}
-    <div class="contain">
-    	<div class="row">
-    		<div class="col-md-10">
-    			<div id="header">
-    				<h1>自己动手写计算器</h1>
-    				<hr>
-    			</div>
-    				
-    			<div id="body">
-    				<h2>一、功能分析</h2>
-    				<p>
-    					用户输入一个类似这样 3*( 4+ 50 )-(( 100 + 40 )*5/2- 3*2* 2/4+9)*((( 3 + 4)-4)-4) 这样的表达式，假设表达式里面除了包含空格、'+'、'-'、'*'、'/'和括号再无其他特殊符号，然后直接动手写代码解析其中的表达式，实现加减乘除，最后得出的结果与真实的计算机所算的结果必须一致。
-    				</p>
+   <div class="row">
+        <div class="col-md-12">
+            <div id="header">
+                <h1>自己动手写计算器</h1>
+                <hr>
+            </div>
+                
+            <div id="body">
+                <h2>一、功能分析</h2>
+                <p>
+                    用户输入一个类似这样 3*( 4+ 50 )-(( 100 + 40 )*5/2- 3*2* 2/4+9)*((( 3 + 4)-4)-4) 这样的表达式，假设表达式里面除了包含空格、'+'、'-'、'*'、'/'和括号再无其他特殊符号，然后直接动手写代码解析其中的表达式，实现加减乘除，最后得出的结果与真实的计算机所算的结果必须一致。
+                </p>
 
-    				<h2>二、所需的知识点</h2>
-    				<ul>
-    					<li>字符串的处理</li>
-    					<li>正则表达式的运用</li>
-    					<li>函数递归</li>
-    				</ul>
+                <h2>二、所需的知识点</h2>
+                <ul>
+                    <li>字符串的处理</li>
+                    <li>正则表达式的运用</li>
+                    <li>函数递归</li>
+                </ul>
 
-    				<h2>三、程序实现流程分析 </h2>
-    				<ul>
-    					<li>用正则表达式处理字符串，只提取其中的数字和运算符，并转换成列表</li>
-    					<li>编写一个函数，处理没有括号的基本运算的基本表达式</li>
-    					<li>
-    						再写一个函数递归处理带有括号的函数，先计算最内部括号中的表达式, 然后将最内部的括号替换为计算后的结果, 在递归外部一层的, 最后返回的就是所需的结果
-    					</li>
-    				</ul>
+                <h2>三、程序实现流程分析 </h2>
+                <ul>
+                    <li>用正则表达式处理字符串，只提取其中的数字和运算符，并转换成列表</li>
+                    <li>编写一个函数，处理没有括号的基本运算的基本表达式</li>
+                    <li>
+                        再写一个函数递归处理带有括号的函数，先计算最内部括号中的表达式, 然后将最内部的括号替换为计算后的结果, 在递归外部一层的, 最后返回的就是所需的结果
+                    </li>
+                </ul>
 
-    				<h2>四、具体实现过程</h2>
-    				<h3>1.正则表达式处理用户输入字符串</h3>
-    				<p>
-    					这里我不会讲正则表达式具体的用法，要将的话都可以讲一本书了，我只讲本文用到的正则表达式。根据需求，我们需要提取出用户输入字符串中的数字和运算符到一个列表中，而空格将会被忽略掉，假设用户输入的表达式是 expression，我们可以写出下面的代码：
-    				</p>
-    				<pre>
+                <h2>四、具体实现过程</h2>
+                <h3>1.正则表达式处理用户输入字符串</h3>
+                <p>
+                    这里我不会讲正则表达式具体的用法，要将的话都可以讲一本书了，我只讲本文用到的正则表达式。根据需求，我们需要提取出用户输入字符串中的数字和运算符到一个列表中，而空格将会被忽略掉，假设用户输入的表达式是 expression，我们可以写出下面的代码：
+                </p>
+                <pre>
 import re
 expression='(( 100 + 40 )*5/2- 3*2* 2/4+9)*((( 3 + 4)-4)-4)'
 l=re.findall('([\d\.]+|/|-|\+|\*)',expression)
 print(l) #['100', '+', '40', '*', '5', '/', '2', '-', '3', '*', '2', 
-	 #'*', '2', '/', '4', '+', '9', '*', '3', '+', '4', '-', '4', '-', '4']</pre>
-    				<p>
-    					首先我们先看一下 findall 的用法，findall可以匹配所有符合规律的内容，返回包含结果的列表。'([\d\.]+|/|-|\+|\*)'是匹配规则，这里\d表示匹配一个数字，\.表示将.转义成数字上小数点 . ，不然在正则表达式里 . 可以匹配除了换行符以外的任意字符。[\d\.]+表示可以匹配至少由一个数字、或者小数点 . 组成的字符串，比如说，这里既可以匹配到100，也可以匹配到100.11。|/|-|\+|\* 表示匹配到+或-或*或/，()表示一组，这里意思是如果匹配到数字或者+或者-或者*或者/其中任意一个的话，就将其作为一组，然后添加到列表中去。
-    				</p>
+ #'*', '2', '/', '4', '+', '9', '*', '3', '+', '4', '-', '4', '-', '4']</pre>
+                <p>
+                    首先我们先看一下 findall 的用法，findall可以匹配所有符合规律的内容，返回包含结果的列表。'([\d\.]+|/|-|\+|\*)'是匹配规则，这里\d表示匹配一个数字，\.表示将.转义成数字上小数点 . ，不然在正则表达式里 . 可以匹配除了换行符以外的任意字符。[\d\.]+表示可以匹配至少由一个数字、或者小数点 . 组成的字符串，比如说，这里既可以匹配到100，也可以匹配到100.11。|/|-|\+|\* 表示匹配到+或-或*或/，()表示一组，这里意思是如果匹配到数字或者+或者-或者*或者/其中任意一个的话，就将其作为一组，然后添加到列表中去。
+                </p>
 
-    				<h3>2.不含括号的表达式的计算</h3>
-    				<p>
-    					为了后面迭代算出有括号的表达式，我们先写一个没有括号的表达式，比如说像这样一个表达式 '100.5+40*5/2-3*2*2/4+9',对于这样的表达式我们肯定是计算乘除，在计算加减，计算一个最小计算单元后，再将结果放回列表中不断循环，直到算出整个不带括号的表达式，实现的代码如下：
-    				</p>
-    				<pre>
+                <h3>2.不含括号的表达式的计算</h3>
+                <p>
+                    为了后面迭代算出有括号的表达式，我们先写一个没有括号的表达式，比如说像这样一个表达式 '100.5+40*5/2-3*2*2/4+9',对于这样的表达式我们肯定是计算乘除，在计算加减，计算一个最小计算单元后，再将结果放回列表中不断循环，直到算出整个不带括号的表达式，实现的代码如下：
+                </p>
+                <pre>
 import re
 expression= '100.5+40*5/2-3*2*2/4+9'
 l = re.findall('([\d\.]+|/|-|\+|\*)',expression)
 print(100.5+40*5/2-3*2*2/4+9)                     # 206.5
 def multdiv(l,x):                                 #定义最小的乘除运算单元，l是列表，x代表*或/
-    a = l.index(x)                                #首先获取乘除运算符的位置
-    if x=='*':                                    #如果是*则执行乘法运算
-        k = float(l[a - 1]) * float(l[a + 1])     #获取乘法运算的结果，比如k=3*2
-    else:
-        k = float(l[a - 1]) / float(l[a + 1])
-    del l[a - 1], l[a - 1], l[a - 1]              #删除掉列表里刚做运算的三个元素，比如，3 * 2
-    l.insert(a - 1, str(k))                       #将刚计算的结果插入到列表中然后执行下一次计算
-    return l
- 
+a = l.index(x)                                #首先获取乘除运算符的位置
+if x=='*':                                    #如果是*则执行乘法运算
+    k = float(l[a - 1]) * float(l[a + 1])     #获取乘法运算的结果，比如k=3*2
+else:
+    k = float(l[a - 1]) / float(l[a + 1])
+del l[a - 1], l[a - 1], l[a - 1]              #删除掉列表里刚做运算的三个元素，比如，3 * 2
+l.insert(a - 1, str(k))                       #将刚计算的结果插入到列表中然后执行下一次计算
+return l
+
 def fun(s):
-    sum=0
-    while 1:                                      #先将乘除运算计算完，在计算加减
-        if '*' in l and '/' not in l:             #先判断，如果只有*的话，先计算 *
+sum=0
+while 1:                                      #先将乘除运算计算完，在计算加减
+    if '*' in l and '/' not in l:             #先判断，如果只有*的话，先计算 *
+        multdiv(l, '*')
+    elif '*' not in l and '/' in l:           #如果只有 /的话，先计算 /
+        multdiv(l, '/')
+    elif '*' in l and '/' in l:               #如果既有 / 也有 *的话，先获取他们的下标，
+        a = l.index('*')                      #根据下标判断先执行哪个
+        b = l.index('/')
+        if a < b:
             multdiv(l, '*')
-        elif '*' not in l and '/' in l:           #如果只有 /的话，先计算 /
+        else:
             multdiv(l, '/')
-        elif '*' in l and '/' in l:               #如果既有 / 也有 *的话，先获取他们的下标，
-            a = l.index('*')                      #根据下标判断先执行哪个
-            b = l.index('/')
-            if a < b:
-                multdiv(l, '*')
+    else:                                     #当上面的乘除计算完之后，就可以计算加减了
+        if l[0]=='-':                         #这里需要判断一下，如果列表里第一个符号是‘-’的话,表示
+            l[0]=l[0]+l[1]                    #第一个数是负数，所以我们需要将列表第一和第二项合并起来
+            del l[1]
+        sum += float(l[0])                    #做完上面的处理后列表中就只剩加减计算了，
+        for i in range(1,len(l),2):
+            if l[i]=='+':                     #根据符号执行加减计算，将结果保存在sum中
+                sum+=float(l[i+1])
             else:
-                multdiv(l, '/')
-        else:                                     #当上面的乘除计算完之后，就可以计算加减了
-            if l[0]=='-':                         #这里需要判断一下，如果列表里第一个符号是‘-’的话,表示
-                l[0]=l[0]+l[1]                    #第一个数是负数，所以我们需要将列表第一和第二项合并起来
-                del l[1]
-            sum += float(l[0])                    #做完上面的处理后列表中就只剩加减计算了，
-            for i in range(1,len(l),2):
-                if l[i]=='+':                     #根据符号执行加减计算，将结果保存在sum中
-                    sum+=float(l[i+1])
-                else:
-                    sum-=float(l[i+1])
-            break
-    return  sum                                   #最后返回这个不含括号表达式的结果
+                sum-=float(l[i+1])
+        break
+return  sum                                   #最后返回这个不含括号表达式的结果
 a=fun(l)
 print(a)                                          # 206.5 可以看出与实际的计算结果一样</pre>
-    				<p>
-    					代码写到这里主要的功能实现了，但是上面的代码还有一个小问题，那就是如果我们的表达式如果是这样的 7*((1-4)-4) 我们按照程序流程执行的话执行一次fun的话，表达式变成这样 7*(-3-4),在执行一次的话就变成 7*-7，这样的话，我们在执行上面的fun函数就会出现问题，因为两个数字之间出现了两个运算符，所以我们要修改上面的函数使其能处理这种情况。
-    				</p>
-    				<pre>
+                <p>
+                    代码写到这里主要的功能实现了，但是上面的代码还有一个小问题，那就是如果我们的表达式如果是这样的 7*((1-4)-4) 我们按照程序流程执行的话执行一次fun的话，表达式变成这样 7*(-3-4),在执行一次的话就变成 7*-7，这样的话，我们在执行上面的fun函数就会出现问题，因为两个数字之间出现了两个运算符，所以我们要修改上面的函数使其能处理这种情况。
+                </p>
+                <pre>
 def multdiv(l,x):                                　 #定义最小的乘除运算单元，l是列表，x代表*或/
-    a = l.index(x)                                  #首先获取乘除运算符的位置
-    if x == '*' and l[a + 1] != '-':                #判断*，/后面的一个操作符是否是‘-’如果是的话，分别进行处理
-        k = float(l[a - 1]) * float(l[a + 1])
-    elif x == '/' and l[a + 1] != '-':
-        k = float(l[a - 1]) / float(l[a + 1])
-    elif x == '*' and l[a + 1] == '-':
-        k = -(float(l[a - 1]) * float(l[a + 2]))
-    elif x == '/' and l[a + 1] == '-':
-        k = -(float(l[a - 1]) / float(l[a + 2]))
-    del l[a - 1], l[a - 1], l[a - 1]                #删除掉列表里刚做运算的三个元素，比如，3 * 2
-    l.insert(a - 1, str(k))                         #将刚计算的结果插入到列表中然后执行下一次计算
-    return l
- 
+a = l.index(x)                                  #首先获取乘除运算符的位置
+if x == '*' and l[a + 1] != '-':                #判断*，/后面的一个操作符是否是‘-’如果是的话，分别进行处理
+    k = float(l[a - 1]) * float(l[a + 1])
+elif x == '/' and l[a + 1] != '-':
+    k = float(l[a - 1]) / float(l[a + 1])
+elif x == '*' and l[a + 1] == '-':
+    k = -(float(l[a - 1]) * float(l[a + 2]))
+elif x == '/' and l[a + 1] == '-':
+    k = -(float(l[a - 1]) / float(l[a + 2]))
+del l[a - 1], l[a - 1], l[a - 1]                #删除掉列表里刚做运算的三个元素，比如，3 * 2
+l.insert(a - 1, str(k))                         #将刚计算的结果插入到列表中然后执行下一次计算
+return l
+
 def fun(l):
-    sum=0
-    print(l)
-    while 1:                                     	#先将乘除运算计算完，在计算加减
-        if '*' in l and '/' not in l:            	#先判断，如果只有*的话，先计算 *
+sum=0
+print(l)
+while 1:                                        #先将乘除运算计算完，在计算加减
+    if '*' in l and '/' not in l:               #先判断，如果只有*的话，先计算 *
+        multdiv(l, '*')
+    elif '*' not in l and '/' in l:             #如果只有 /的话，先计算 /
+        multdiv(l, '/')
+    elif '*' in l and '/' in l:                 #如果既有 / 也有 *的话，先获取他们的下标，
+        a = l.index('*')                        #根据下标判断先执行哪个
+        b = l.index('/')
+        if a < b:
             multdiv(l, '*')
-        elif '*' not in l and '/' in l:          	#如果只有 /的话，先计算 /
+        else:
             multdiv(l, '/')
-        elif '*' in l and '/' in l:             	#如果既有 / 也有 *的话，先获取他们的下标，
-            a = l.index('*')                     	#根据下标判断先执行哪个
-            b = l.index('/')
-            if a < b:
-                multdiv(l, '*')
-            else:
-                multdiv(l, '/')
-        else:                                       #当上面的乘除计算完之后，就可以计算加减了
-            print(l)
-            if l[0]=='-':                           #这里需要判断一下，如果列表里第一个符号是‘-’的话，表示第
-                l[0]=l[0]+l[1]                  　　#一个数是负数，所以我们需要将列表第一和第二项合并起来　　　　 	del l[1]
-            sum += float(l[0])                  　　#做完上面的处理后列表中就只剩加减计算了，
-            for i in range(1, len(l), 2):
-                if l[i] == '+' and l[i + 1] != '-': #判断+，-后面的一个操作符是否是‘-’如果是的话分别进行处理
-                    sum += float(l[i + 1])
-                elif l[i] == '+' and l[i + 1] == '-':
-                    sum -= float(l[i + 2])
-                elif l[i] == '-' and l[i + 1] == '-':
-                    sum += float(l[i + 2])
-                elif l[i] == '-' and l[i + 1] != '-':
-                    sum -= float(l[i + 1])
-            break
-    return  sum                                 　　#最后返回这个不含括号表达式的结果</pre>
-    				<p>到这里，我们就完成了不含括号表达式的运算，程序的一大半就完成了，下面我们在完成剩下的程序。</p>
+    else:                                       #当上面的乘除计算完之后，就可以计算加减了
+        print(l)
+        if l[0]=='-':                           #这里需要判断一下，如果列表里第一个符号是‘-’的话，表示第
+            l[0]=l[0]+l[1]                  　　#一个数是负数，所以我们需要将列表第一和第二项合并起来　　　　   del l[1]
+        sum += float(l[0])                  　　#做完上面的处理后列表中就只剩加减计算了，
+        for i in range(1, len(l), 2):
+            if l[i] == '+' and l[i + 1] != '-': #判断+，-后面的一个操作符是否是‘-’如果是的话分别进行处理
+                sum += float(l[i + 1])
+            elif l[i] == '+' and l[i + 1] == '-':
+                sum -= float(l[i + 2])
+            elif l[i] == '-' and l[i + 1] == '-':
+                sum += float(l[i + 2])
+            elif l[i] == '-' and l[i + 1] != '-':
+                sum -= float(l[i + 1])
+        break
+return  sum                                 　　#最后返回这个不含括号表达式的结果</pre>
+                <p>到这里，我们就完成了不含括号表达式的运算，程序的一大半就完成了，下面我们在完成剩下的程序。</p>
 
-    				<h3>3.带有括号表达式的递归计算</h3>
-    				<p>
-    					首先计算最里面一个括号里的表达式，调用fun函数计算出其值，将其结果代替其括号，然后不停的递归调用直到获取最后的结果。
-    				</p>
-    				<pre>
+                <h3>3.带有括号表达式的递归计算</h3>
+                <p>
+                    首先计算最里面一个括号里的表达式，调用fun函数计算出其值，将其结果代替其括号，然后不停的递归调用直到获取最后的结果。
+                </p>
+                <pre>
 def calculate(expression):
-    ex=[]                       			    #存储'('出现的位置
-    ans=0                       			    #保存结果
-    if '(' not in expression:   			    #如果括号都处理完成了，直接调用fun函数返回结果
-        ans=fun(expression)
-        return ans
-    for i in range(len(expression)):
-        if expression[i]=='(':
-            ex.append(i) #ex=[6,7]                          #纪录 '(' 出现的位置
-        elif expression[i]==')':                            #遇到 ')'后。就可以计算第一个括号里的值
-            temp=0                                          #定义一个变量 存储括号表达式的结果
-            sub=expression[ex[len(ex)-1]+1:i]               #获取括号里的表达式
-            temp=fun(sub)                                   #调用fun函数计算括号里的表达式的值
+ex=[]                                       #存储'('出现的位置
+ans=0                                       #保存结果
+if '(' not in expression:                   #如果括号都处理完成了，直接调用fun函数返回结果
+    ans=fun(expression)
+    return ans
+for i in range(len(expression)):
+    if expression[i]=='(':
+        ex.append(i) #ex=[6,7]                          #纪录 '(' 出现的位置
+    elif expression[i]==')':                            #遇到 ')'后。就可以计算第一个括号里的值
+        temp=0                                          #定义一个变量 存储括号表达式的结果
+        sub=expression[ex[len(ex)-1]+1:i]               #获取括号里的表达式
+        temp=fun(sub)                                   #调用fun函数计算括号里的表达式的值
 
-            #去掉刚才的括号表达式，并用temp代替，返回一个新的表达式
-            expression=expression[0:ex[len(ex)-1]]+str(temp)+expression[i+1:len(expression)+1] 
+        #去掉刚才的括号表达式，并用temp代替，返回一个新的表达式
+        expression=expression[0:ex[len(ex)-1]]+str(temp)+expression[i+1:len(expression)+1] 
 
-            ex.pop()                                        #删除刚才计算完的括号表达式里面 '(' 的位置
-            return calculate(expression)                    #递归计算新的表达式，直道所有的括号处理完毕</pre>
+        ex.pop()                                        #删除刚才计算完的括号表达式里面 '(' 的位置
+        return calculate(expression)                    #递归计算新的表达式，直道所有的括号处理完毕</pre>
 
-    				<h3>4.大功告成</h3>
-    				<p>到这里所有的模块都完成了，一个简单的计算器就实现了，下面附上完整的代码</p>
-    				<pre>
+                <h3>4.大功告成</h3>
+                <p>到这里所有的模块都完成了，一个简单的计算器就实现了，下面附上完整的代码</p>
+                <pre>
 import re
 def md(l,x):
-    a = l.index(x)
-    if x == '*' and l[a + 1] != '-':
-        k = float(l[a - 1]) * float(l[a + 1])
-    elif x == '/' and l[a + 1] != '-':
-        k = float(l[a - 1]) / float(l[a + 1])
-    elif x == '*' and l[a + 1] == '-':
-        k = -(float(l[a - 1]) * float(l[a + 2]))
-    elif x == '/' and l[a + 1] == '-':
-        k = -(float(l[a - 1]) / float(l[a + 2]))
-    del l[a - 1], l[a - 1], l[a - 1]
-    l.insert(a - 1, str(k))
-    return l
- 
+a = l.index(x)
+if x == '*' and l[a + 1] != '-':
+    k = float(l[a - 1]) * float(l[a + 1])
+elif x == '/' and l[a + 1] != '-':
+    k = float(l[a - 1]) / float(l[a + 1])
+elif x == '*' and l[a + 1] == '-':
+    k = -(float(l[a - 1]) * float(l[a + 2]))
+elif x == '/' and l[a + 1] == '-':
+    k = -(float(l[a - 1]) / float(l[a + 2]))
+del l[a - 1], l[a - 1], l[a - 1]
+l.insert(a - 1, str(k))
+return l
+
 def fun(s):
-    l = re.findall('([\d\.]+|/|-|\+|\*)',s)
-    sum=0
-    while 1:
-        if '*' in l and '/' not in l:
+l = re.findall('([\d\.]+|/|-|\+|\*)',s)
+sum=0
+while 1:
+    if '*' in l and '/' not in l:
+        md(l, '*')
+    elif '*' not in l and '/' in l:
+        md(l, '/')
+    elif '*' in l and '/' in l:
+        a = l.index('*')
+        b = l.index('/')
+        if a < b:
             md(l, '*')
-        elif '*' not in l and '/' in l:
-            md(l, '/')
-        elif '*' in l and '/' in l:
-            a = l.index('*')
-            b = l.index('/')
-            if a < b:
-                md(l, '*')
-            else:
-                md(l, '/')
         else:
-            if l[0]=='-':
-                l[0]=l[0]+l[1]
-                del l[1]
-            sum += float(l[0])
-            for i in range(1, len(l), 2):
-                if l[i] == '+' and l[i + 1] != '-':
-                    sum += float(l[i + 1])
-                elif l[i] == '+' and l[i + 1] == '-':
-                    sum -= float(l[i + 2])
-                elif l[i] == '-' and l[i + 1] == '-':
-                    sum += float(l[i + 2])
-                elif l[i] == '-' and l[i + 1] != '-':
-                    sum -= float(l[i + 1])
-            break
-    return sum
+            md(l, '/')
+    else:
+        if l[0]=='-':
+            l[0]=l[0]+l[1]
+            del l[1]
+        sum += float(l[0])
+        for i in range(1, len(l), 2):
+            if l[i] == '+' and l[i + 1] != '-':
+                sum += float(l[i + 1])
+            elif l[i] == '+' and l[i + 1] == '-':
+                sum -= float(l[i + 2])
+            elif l[i] == '-' and l[i + 1] == '-':
+                sum += float(l[i + 2])
+            elif l[i] == '-' and l[i + 1] != '-':
+                sum -= float(l[i + 1])
+        break
+return sum
 def calculate(expression):
-    ex=[]
-    ans=0
-    if '(' not in expression:
-        ans=fun(expression)
-        return ans
-    for i in range(len(expression)):
-        if expression[i]=='(':
-            ex.append(i) #ex=[6,7]
-        elif expression[i]==')': #14
-            temp=0
-            sub=expression[ex[len(ex)-1]+1:i]
-            temp=fun(sub)
-            expression=expression[0:ex[len(ex)-1]]+str(temp)+expression[i+1:len(expression)+1]
-            ex.pop()
-            return calculate(expression)
- 
+ex=[]
+ans=0
+if '(' not in expression:
+    ans=fun(expression)
+    return ans
+for i in range(len(expression)):
+    if expression[i]=='(':
+        ex.append(i) #ex=[6,7]
+    elif expression[i]==')': #14
+        temp=0
+        sub=expression[ex[len(ex)-1]+1:i]
+        temp=fun(sub)
+        expression=expression[0:ex[len(ex)-1]]+str(temp)+expression[i+1:len(expression)+1]
+        ex.pop()
+        return calculate(expression)
+
 s='1 - 2 * ( (60-30 +(-40/5+3) * (9-2*5/3 + 7 /3*99/4*2998 +10 * 568/14 )) - (-4*3)/ (16-3*2) )'
 print(1 - 2 * ( (60-30 +(-40/5+3) * (9-2*5/3 + 7 /3*99/4*2998 +10 * 568/14 )) - (-4*3)/ (16-3*2) )) 
 s3='3*(4+50)-((100+40)*5/2-3*2*2/4+9)*(((3+4)-4)-4)'  　　　　　　　　　　　　　　　　　　　　　　
@@ -247,14 +246,13 @@ print(calculate(s3))
 #518.0
 #1735397.4095238098
 #518.0</pre>
-    				<p>
-    					为了简洁性，上面完整的代码没有写注释，要看注释的话可以往文章的上面去查看，最后为了可以简单的对比计算器的正确性，就没有加入input部分来获取用户的输入，直接在代码中用字符串代替了，代码的最后可以看出代码正确的运行了，到这里简易计算器就完成了。
-    				</p>
+                <p>
+                    为了简洁性，上面完整的代码没有写注释，要看注释的话可以往文章的上面去查看，最后为了可以简单的对比计算器的正确性，就没有加入input部分来获取用户的输入，直接在代码中用字符串代替了，代码的最后可以看出代码正确的运行了，到这里简易计算器就完成了。
+                </p>
 
-    				<h2>五、小结</h2>
-    				<p>看了上面的代码，是不是觉得好麻烦啊，还要自己动手写计算器，那么Python有没有已经写好的函数帮我们完成这一功能了，作为追求简洁的python来说必须有，一行代码解决上面我们做的所有事，而且功能更加完善，那就是eval()函数，只需将要计算的表达式传递给eval函数即可算出结果。看到这里，是不是有点泪奔的感觉，白写了。其实不然，通过我们自己写，可以更好的理解实现的原理，并且加强自己写代码的能力。</p>
-    			</div>
-    		</div>
-    	</div>
+                <h2>五、小结</h2>
+                <p>看了上面的代码，是不是觉得好麻烦啊，还要自己动手写计算器，那么Python有没有已经写好的函数帮我们完成这一功能了，作为追求简洁的python来说必须有，一行代码解决上面我们做的所有事，而且功能更加完善，那就是eval()函数，只需将要计算的表达式传递给eval函数即可算出结果。看到这里，是不是有点泪奔的感觉，白写了。其实不然，通过我们自己写，可以更好的理解实现的原理，并且加强自己写代码的能力。</p>
+            </div>
+        </div>
     </div>
 {% endblock %}
